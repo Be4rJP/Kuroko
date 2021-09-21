@@ -1,0 +1,14 @@
+record-data: 'example-npc'
+base-location: 'world, -220, 74, -120'
+loop: true
+start-tick: 4
+end-tick: 516
+distance-unload: true
+
+speech:
+  test1:
+    - 'テスト1-1(1行目)/n/テスト1-1(2行目)/n/テスト1-1(3行目)'
+    - 'テスト1-2'
+  test2:
+    - 'テスト2-1/n/command{console/give %player minecraft:tnt}'
+    - 'テスト2-2'

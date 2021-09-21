@@ -1,0 +1,6 @@
+name: Kuroko
+version: ${project.version}
+main: be4rjp.kuroko.Kuroko
+api-version: 1.15
+
+depend: [Cinema4C]
