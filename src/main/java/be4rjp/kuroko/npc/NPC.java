@@ -5,6 +5,7 @@ import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Kuroko;
 import be4rjp.kuroko.event.AsyncNPCSpeechEndEvent;
 import be4rjp.kuroko.event.AsyncNPCSpeechInitializeEvent;
+import be4rjp.kuroko.player.KurokoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -12,6 +13,8 @@ public class NPC {
     
     //NPCの基礎データ
     private final NPCData npcData;
+    //このNPCを見せるプレイヤー
+    private final KurokoPlayer kurokoPlayer;
     //再生に使用する映像プレイヤー
     private final ScenePlayer scenePlayer;
     
@@ -24,21 +27,24 @@ public class NPC {
     private long talkCoolTime = 0;
     
     
-    public NPC(NPCData npcData, Player player){
+    public NPC(NPCData npcData, KurokoPlayer kurokoPlayer){
         this.npcData = npcData;
+        this.kurokoPlayer= kurokoPlayer;
         this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation(), npcData.getStartTick(), npcData.getEndTick());
         
-        scenePlayer.addAudience(player);
+        scenePlayer.addAudience(kurokoPlayer.getPlayer());
         scenePlayer.initialize();
         scenePlayer.start(npcData.isLoop() ? ScenePlayer.PlayMode.LOOP : ScenePlayer.PlayMode.ALL_PLAY);
     }
     
-    public synchronized void talk(Player player){
-        if(talkCoolTime > System.currentTimeMillis()) return;
+    public synchronized void talk(){
+        if(talkCoolTime > System.currentTimeMillis() || npcData.getSpeeches() == null) return;
+        
+        Player player = kurokoPlayer.getPlayer();
         
         if(currentSpeech == null){
             currentSpeech = npcData.getRandomSpeech();
-            AsyncNPCSpeechInitializeEvent initializeEvent = new AsyncNPCSpeechInitializeEvent(this, currentSpeech, player);
+            AsyncNPCSpeechInitializeEvent initializeEvent = new AsyncNPCSpeechInitializeEvent(this, currentSpeech, kurokoPlayer);
             Bukkit.getPluginManager().callEvent(initializeEvent);
             currentSpeech = initializeEvent.getSpeech();
             
@@ -77,11 +83,11 @@ public class NPC {
         
         String nextLine = currentSpeech.getLine(currentTalkIndex);
         if(nextLine == null){
-            AsyncNPCSpeechEndEvent speechEndEvent = new AsyncNPCSpeechEndEvent(this, npcData.getSpeeches().indexOf(currentSpeech), player);
+            AsyncNPCSpeechEndEvent speechEndEvent = new AsyncNPCSpeechEndEvent(this, currentSpeech, kurokoPlayer);
             Bukkit.getPluginManager().callEvent(speechEndEvent);
             currentSpeech = null;
             currentTalkIndex = 0;
-            Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 12);
+            Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
             
             talkCoolTime = System.currentTimeMillis() + 2000;
         }else{
@@ -89,9 +95,17 @@ public class NPC {
         }
     }
     
-    public void unload(){
-        scenePlayer.cancel();
+    public void resetSpeech(){
+        if(currentSpeech == null) return;
+        
+        AsyncNPCSpeechEndEvent speechEndEvent = new AsyncNPCSpeechEndEvent(this, currentSpeech, kurokoPlayer);
+        Bukkit.getPluginManager().callEvent(speechEndEvent);
+        currentSpeech = null;
+        currentTalkIndex = 0;
+        scenePlayer.setPause(false);
     }
+    
+    public void unload(){scenePlayer.cancel();}
     
     public NPCData getNpcData() {return npcData;}
     

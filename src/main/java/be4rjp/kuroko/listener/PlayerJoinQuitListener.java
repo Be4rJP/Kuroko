@@ -4,6 +4,7 @@ import be4rjp.cinema4c.nms.NMSUtil;
 import be4rjp.cinema4c.player.ScenePlayer;
 import be4rjp.cinema4c.recorder.RecordManager;
 import be4rjp.cinema4c.util.TaskHandler;
+import be4rjp.kuroko.Config;
 import be4rjp.kuroko.Kuroko;
 import be4rjp.kuroko.event.AsyncPlayerNPCDataLoadEvent;
 import be4rjp.kuroko.npc.NPCData;
@@ -17,9 +18,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerJoinQuitListener implements Listener {
+    
+    private static Set<NPCData> defaultLoadData = null;
     
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -27,7 +32,19 @@ public class PlayerJoinQuitListener implements Listener {
         KurokoPlayer kurokoPlayer = KurokoPlayer.addPlayer(player);
         
         TaskHandler.runAsync(() -> {
-            kurokoPlayer.addNPC(NPCData.getNPCData("example-data"));
+            if(defaultLoadData == null){
+                Set<NPCData> defaultLoadDataSet = ConcurrentHashMap.newKeySet();
+                for(String name : Config.getDefaultLoadNPCList()){
+                    NPCData npcData = NPCData.getNPCData(name);
+                    if(npcData == null) continue;
+                    
+                    defaultLoadDataSet.add(npcData);
+                }
+                
+                defaultLoadData = defaultLoadDataSet;
+            }
+            
+            defaultLoadData.forEach(kurokoPlayer::addNPC);
             
             AsyncPlayerNPCDataLoadEvent loadEvent = new AsyncPlayerNPCDataLoadEvent(kurokoPlayer);
             Bukkit.getPluginManager().callEvent(loadEvent);

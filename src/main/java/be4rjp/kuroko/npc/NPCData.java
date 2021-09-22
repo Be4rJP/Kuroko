@@ -62,6 +62,8 @@ public class NPCData {
     private List<Speech> speeches;
     //描画範囲外でアンロードさせるかどうか
     private boolean distanceUnload = true;
+    //セリフをリセットする距離
+    private double speechResetDistance = -1;
     
     
     public NPCData(String id){this.id = id;}
@@ -84,6 +86,8 @@ public class NPCData {
     
     public boolean isDistanceUnload() {return distanceUnload;}
     
+    public double getSpeechResetDistance() {return speechResetDistance;}
+    
     public void load(YamlConfiguration yml){
         this.yml = yml;
         
@@ -93,6 +97,7 @@ public class NPCData {
         if(yml.contains("end-tick")) this.endTick = yml.getInt("end-tick");
         if(yml.contains("base-location")) this.baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location"));
         if(yml.contains("distance-unload")) this.distanceUnload = yml.getBoolean("distance-unload");
+        if(yml.contains("speech-reset-distance")) this.speechResetDistance = yml.getDouble("speech-reset-distance");
         
         if(yml.contains("speech")){
             this.speeches = new ArrayList<>();

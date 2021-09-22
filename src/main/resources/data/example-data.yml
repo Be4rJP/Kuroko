@@ -4,6 +4,7 @@ loop: true
 start-tick: 4
 end-tick: 516
 distance-unload: true
+speech-reset-distance: 10
 
 speech:
   test1:

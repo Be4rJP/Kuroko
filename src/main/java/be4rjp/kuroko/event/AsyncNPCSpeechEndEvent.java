@@ -1,6 +1,8 @@
 package be4rjp.kuroko.event;
 
 import be4rjp.kuroko.npc.NPC;
+import be4rjp.kuroko.npc.Speech;
+import be4rjp.kuroko.player.KurokoPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,21 +13,21 @@ public class AsyncNPCSpeechEndEvent extends Event {
     
     
     private final NPC npc;
-    private final int endSpeechIndex;
-    private final Player audience;
+    private final Speech endSpeech;
+    private final KurokoPlayer kurokoPlayer;
     
-    public AsyncNPCSpeechEndEvent(NPC npc, int endSpeechIndex, Player audience){
+    public AsyncNPCSpeechEndEvent(NPC npc, Speech endSpeech, KurokoPlayer kurokoPlayer){
         super(true);
         this.npc = npc;
-        this.endSpeechIndex = endSpeechIndex;
-        this.audience = audience;
+        this.endSpeech = endSpeech;
+        this.kurokoPlayer = kurokoPlayer;
     }
     
     public NPC getNpc() {return npc;}
     
-    public int getEndSpeechIndex() {return endSpeechIndex;}
+    public Speech getEndSpeech() {return endSpeech;}
     
-    public Player getPlayer() {return audience;}
+    public KurokoPlayer getPlayer() {return kurokoPlayer;}
     
     @Override
     public HandlerList getHandlers() {

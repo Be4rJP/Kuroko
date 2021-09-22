@@ -12,13 +12,11 @@ public class KurokoPlayer {
     
     private static final Map<Player, KurokoPlayer> playerMap = new HashMap<>();
     
-    public static synchronized KurokoPlayer getKurokoPlayer(Player player){return playerMap.get(player);}
+    public static KurokoPlayer getKurokoPlayer(Player player){return playerMap.get(player);}
     
-    public static synchronized KurokoPlayer addPlayer(Player player){return playerMap.computeIfAbsent(player, KurokoPlayer::new);}
+    public static KurokoPlayer addPlayer(Player player){return playerMap.computeIfAbsent(player, KurokoPlayer::new);}
     
-    private static synchronized void removePlayer(Player player){playerMap.remove(player);}
-    
-    public static synchronized boolean containsPlayer(Player player){return playerMap.containsKey(player);}
+    private static void removePlayer(Player player){playerMap.remove(player);}
     
     
     

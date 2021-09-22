@@ -3,6 +3,7 @@ package be4rjp.kuroko.player;
 import be4rjp.cinema4c.data.record.tracking.PlayerTrackData;
 import be4rjp.cinema4c.data.record.tracking.TrackData;
 import be4rjp.cinema4c.nms.NMSUtil;
+import be4rjp.cinema4c.util.LocationUtil;
 import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Config;
 import be4rjp.kuroko.npc.NPC;
@@ -23,6 +24,8 @@ public class PlayerChunkBaseNPCMap {
     private final Map<ChunkPosition, Set<NPCData>> chunkNPCDataMap = new ConcurrentHashMap<>();
     
     private final Set<NPC> trackedNPC = ConcurrentHashMap.newKeySet();
+    
+    private final Set<NPC> hideNPC = ConcurrentHashMap.newKeySet();
     
     public PlayerChunkBaseNPCMap(World world){
         this.world = world;
@@ -53,9 +56,23 @@ public class PlayerChunkBaseNPCMap {
                 Location npcLocation = NMSUtil.getEntityLocation(nmsNPC);
                 ChunkPosition npcChunk = new ChunkPosition(npcLocation.getBlockX() >> 4, npcLocation.getBlockZ() >> 4);
                 if(!chunkPositions.contains(npcChunk)){
-                    npc.unload();
-                    trackedNPC.remove(npc);
+                    if(npc.getNpcData().isDistanceUnload()) {
+                        npc.unload();
+                        trackedNPC.remove(npc);
+                    }else{
+                        NMSUtil.sendPacket(kurokoPlayer.getPlayer(), NMSUtil.createEntityDestroyPacket(nmsNPC));
+                        hideNPC.add(npc);
+                    }
                 }
+    
+                
+                double distance = npc.getNpcData().getSpeechResetDistance();
+                if(distance > 0){
+                    if(LocationUtil.distanceSquaredSafeDifferentWorld(kurokoPlayer.getPlayer().getLocation(), npcLocation) > distance * distance){
+                        npc.resetSpeech();
+                    }
+                }
+                
             }catch (Exception e){e.printStackTrace();}
         }
     
@@ -64,25 +81,65 @@ public class PlayerChunkBaseNPCMap {
             if(npcDataSet == null) continue;
             
             for(NPCData npcData : chunkNPCDataMap.get(chunkPosition)){
-                boolean contains = false;
+                
+                NPC npcInstance = null;
                 for(NPC npc : trackedNPC){
                     if(npc.getNpcData() == npcData){
-                        contains = true;
+                        npcInstance = npc;
                         break;
                     }
                 }
         
-                if(!contains && npcData.isDistanceUnload()){
-                    TaskHandler.runSync(() -> trackedNPC.add(new NPC(npcData, kurokoPlayer.getPlayer())));
+                if(npcInstance == null){
+                    TaskHandler.runSync(() -> trackedNPC.add(new NPC(npcData, kurokoPlayer)));
+                }else{
+                    
+                    boolean isHide = false;
+                    for(NPC npc : hideNPC){
+                        if(npc.getNpcData() == npcData){
+                            isHide = true;
+                            break;
+                        }
+                    }
+                    
+                    if(!npcData.isDistanceUnload() && isHide) {
+                        for(TrackData trackData : npcInstance.getScenePlayer().getRecordData().getTrackData()){
+                            if(trackData instanceof PlayerTrackData){
+                                PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
+                                playerTrackData.spawnNPC(npcInstance.getScenePlayer());
+                            }
+                        }
+                        hideNPC.remove(npcInstance);
+                    }
                 }
             }
         }
     }
     
     
-    public void unloadAllChunkNPC(){
-        trackedNPC.forEach(NPC::unload);
+    public void switchWorldUnloadAllChunkNPC(KurokoPlayer kurokoPlayer){
+        for(NPC npc : trackedNPC){
+            if(npc.getNpcData().isDistanceUnload()){
+                npc.unload();
+            }else{
+                Object nmsNPC = null;
+                for(TrackData trackData : npc.getScenePlayer().getRecordData().getTrackData()){
+                    if(trackData instanceof PlayerTrackData){
+                        PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
+                        nmsNPC = playerTrackData.getNPC(npc.getScenePlayer().getID());
+                    }
+                }
+                if(nmsNPC == null) continue;
+    
+                try {
+                    NMSUtil.sendPacket(kurokoPlayer.getPlayer(), NMSUtil.createEntityDestroyPacket(nmsNPC));
+                    hideNPC.add(npc);
+                }catch (Exception e){e.printStackTrace();}
+            }
+        }
     }
+    
+    public void unloadAllChunkNPC(){trackedNPC.forEach(NPC::unload);}
     
     public Set<NPC> getTrackedNPC() {return trackedNPC;}
     

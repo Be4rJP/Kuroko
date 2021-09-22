@@ -40,7 +40,7 @@ public class PacketHandler extends ChannelDuplexHandler{
                         if (trackData instanceof PlayerTrackData) {
                             PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
                             if (NMSUtil.getEntityID(playerTrackData.getNPC(npc.getScenePlayer().getID())) == a.getInt(packet)) {
-                                npc.talk(kurokoPlayer.getPlayer());
+                                npc.talk();
                                 return;
                             }
                         }

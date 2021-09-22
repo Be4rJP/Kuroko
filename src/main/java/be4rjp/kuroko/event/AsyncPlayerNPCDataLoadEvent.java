@@ -16,7 +16,7 @@ public class AsyncPlayerNPCDataLoadEvent extends Event {
         this.kurokoPlayer = kurokoPlayer;
     }
     
-    public KurokoPlayer getKurokoPlayer() {return kurokoPlayer;}
+    public KurokoPlayer getPlayer() {return kurokoPlayer;}
     
     @Override
     public HandlerList getHandlers() {

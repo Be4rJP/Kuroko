@@ -2,7 +2,7 @@ package be4rjp.kuroko.event;
 
 import be4rjp.kuroko.npc.NPC;
 import be4rjp.kuroko.npc.Speech;
-import org.bukkit.entity.Player;
+import be4rjp.kuroko.player.KurokoPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -12,13 +12,13 @@ public class AsyncNPCSpeechInitializeEvent extends Event {
     
     
     private final NPC npc;
-    private final Player player;
+    private final KurokoPlayer kurokoPlayer;
     private Speech speech;
     
-    public AsyncNPCSpeechInitializeEvent(NPC npc, Speech speech, Player player){
+    public AsyncNPCSpeechInitializeEvent(NPC npc, Speech speech, KurokoPlayer kurokoPlayer){
         super(true);
         this.npc = npc;
-        this.player = player;
+        this.kurokoPlayer = kurokoPlayer;
         this.speech = speech;
     }
     
@@ -28,7 +28,7 @@ public class AsyncNPCSpeechInitializeEvent extends Event {
     
     public void setSpeech(Speech speech) {this.speech = speech;}
     
-    public Player getPlayer(){return player;}
+    public KurokoPlayer getPlayer(){return kurokoPlayer;}
     
     
     @Override

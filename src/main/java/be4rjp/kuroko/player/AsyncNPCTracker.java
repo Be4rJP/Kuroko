@@ -20,7 +20,7 @@ public class AsyncNPCTracker extends BukkitRunnable {
         World currentWorld = kurokoPlayer.getPlayer().getWorld();
         
         if(previousWorld != currentWorld){
-            kurokoPlayer.getPlayerChunkBaseNPCMaps(previousWorld).unloadAllChunkNPC();
+            kurokoPlayer.getPlayerChunkBaseNPCMaps(previousWorld).switchWorldUnloadAllChunkNPC(kurokoPlayer);
         }
         
         kurokoPlayer.getPlayerChunkBaseNPCMaps(currentWorld).updateChunkNPC(kurokoPlayer);
