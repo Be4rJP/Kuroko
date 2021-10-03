@@ -2,10 +2,11 @@ package be4rjp.kuroko.event;
 
 import be4rjp.kuroko.npc.NPC;
 import be4rjp.kuroko.player.KurokoPlayer;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class AsyncNPCTalkEvent extends Event {
+public class AsyncNPCTalkEvent extends Event implements Cancellable {
     
     private static final HandlerList HANDLERS = new HandlerList();
     
@@ -13,13 +14,15 @@ public class AsyncNPCTalkEvent extends Event {
     
     private final KurokoPlayer kurokoPlayer;
     
+    private boolean isCancelled = false;
+    
     public AsyncNPCTalkEvent(NPC npc, KurokoPlayer kurokoPlayer){
         super(true);
         this.npc = npc;
         this.kurokoPlayer = kurokoPlayer;
     }
     
-    public NPC getNpc() {return npc;}
+    public NPC getNPC() {return npc;}
     
     public KurokoPlayer getPlayer() {return kurokoPlayer;}
     
@@ -33,4 +36,13 @@ public class AsyncNPCTalkEvent extends Event {
     }
     
     
+    @Override
+    public boolean isCancelled() {
+        return this.isCancelled;
+    }
+    
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.isCancelled = cancel;
+    }
 }

@@ -6,6 +6,7 @@ import be4rjp.kuroko.Kuroko;
 import be4rjp.kuroko.event.AsyncNPCSpeechEndEvent;
 import be4rjp.kuroko.event.AsyncNPCSpeechInitializeEvent;
 import be4rjp.kuroko.player.KurokoPlayer;
+import be4rjp.kuroko.player.PlayerChunkBaseNPCMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,6 +18,8 @@ public class NPC {
     private final KurokoPlayer kurokoPlayer;
     //再生に使用する映像プレイヤー
     private final ScenePlayer scenePlayer;
+    //NPCTracker
+    private final PlayerChunkBaseNPCMap playerChunkBaseNPCMap;
     
     //現在のセリフ
     private Speech currentSpeech;
@@ -27,10 +30,11 @@ public class NPC {
     private long talkCoolTime = 0;
     
     
-    public NPC(NPCData npcData, KurokoPlayer kurokoPlayer){
+    public NPC(NPCData npcData, KurokoPlayer kurokoPlayer, PlayerChunkBaseNPCMap playerChunkBaseNPCMap){
         this.npcData = npcData;
         this.kurokoPlayer= kurokoPlayer;
         this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation(), npcData.getStartTick(), npcData.getEndTick());
+        this.playerChunkBaseNPCMap = playerChunkBaseNPCMap;
         
         scenePlayer.addAudience(kurokoPlayer.getPlayer());
         scenePlayer.initialize();
@@ -105,7 +109,10 @@ public class NPC {
         scenePlayer.setPause(false);
     }
     
-    public void unload(){scenePlayer.cancel();}
+    public void unload(){
+        scenePlayer.cancel();
+        this.playerChunkBaseNPCMap.getTrackedNPC().remove(this);
+    }
     
     public NPCData getNpcData() {return npcData;}
     

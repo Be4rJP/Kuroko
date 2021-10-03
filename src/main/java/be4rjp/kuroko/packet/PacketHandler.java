@@ -3,9 +3,11 @@ package be4rjp.kuroko.packet;
 import be4rjp.cinema4c.data.record.tracking.PlayerTrackData;
 import be4rjp.cinema4c.data.record.tracking.TrackData;
 import be4rjp.cinema4c.nms.NMSUtil;
+import be4rjp.kuroko.event.AsyncPlayerClickNPCEvent;
 import be4rjp.kuroko.npc.NPC;
 import be4rjp.kuroko.player.KurokoPlayer;
 import io.netty.channel.*;
+import org.bukkit.Bukkit;
 
 
 import java.lang.reflect.Field;
@@ -40,6 +42,9 @@ public class PacketHandler extends ChannelDuplexHandler{
                         if (trackData instanceof PlayerTrackData) {
                             PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
                             if (NMSUtil.getEntityID(playerTrackData.getNPC(npc.getScenePlayer().getID())) == a.getInt(packet)) {
+                                AsyncPlayerClickNPCEvent event = new AsyncPlayerClickNPCEvent(kurokoPlayer, npc);
+                                Bukkit.getPluginManager().callEvent(event);
+                                if(event.isCancelled()) return;
                                 npc.talk();
                                 return;
                             }
@@ -47,8 +52,6 @@ public class PacketHandler extends ChannelDuplexHandler{
                     }
                 }
             }catch (Exception e){e.printStackTrace();}
-            
-            return;
         }
         
         super.channelRead(channelHandlerContext, packet);

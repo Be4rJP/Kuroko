@@ -91,7 +91,7 @@ public class PlayerChunkBaseNPCMap {
                 }
         
                 if(npcInstance == null){
-                    TaskHandler.runSync(() -> trackedNPC.add(new NPC(npcData, kurokoPlayer)));
+                    TaskHandler.runSync(() -> trackedNPC.add(new NPC(npcData, kurokoPlayer, PlayerChunkBaseNPCMap.this)));
                 }else{
                     
                     boolean isHide = false;
