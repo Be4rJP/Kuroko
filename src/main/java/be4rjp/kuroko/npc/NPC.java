@@ -1,5 +1,8 @@
 package be4rjp.kuroko.npc;
 
+import be4rjp.cinema4c.data.record.tracking.PlayerTrackData;
+import be4rjp.cinema4c.data.record.tracking.TrackData;
+import be4rjp.cinema4c.nms.NMSUtil;
 import be4rjp.cinema4c.player.ScenePlayer;
 import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Kuroko;
@@ -32,13 +35,41 @@ public class NPC {
     
     public NPC(NPCData npcData, KurokoPlayer kurokoPlayer, PlayerChunkBaseNPCMap playerChunkBaseNPCMap){
         this.npcData = npcData;
-        this.kurokoPlayer= kurokoPlayer;
-        this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation(), npcData.getStartTick(), npcData.getEndTick());
+        this.kurokoPlayer = kurokoPlayer;
+        this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation().getWorld(), npcData.getStartTick(), npcData.getEndTick());
         this.playerChunkBaseNPCMap = playerChunkBaseNPCMap;
         
         scenePlayer.addAudience(kurokoPlayer.getPlayer());
         scenePlayer.initialize();
         scenePlayer.start(npcData.isLoop() ? ScenePlayer.PlayMode.LOOP : ScenePlayer.PlayMode.ALL_PLAY);
+        scenePlayer.getCancelRunnableSet().add(() -> NPC.this.playerChunkBaseNPCMap.getTrackedNPC().remove(NPC.this));
+    }
+    
+    public void playAnimation(Animation animation){
+        Object npc = this.getEntityPlayerInstance();
+        if(npc == null) return;
+    
+        try {
+            if (animation.isPose()) {
+                
+                Object dataWatcher = NMSUtil.getDataWatcher(npc);
+                NMSUtil.setEntityPose(dataWatcher, animation.getEntityPoseEnumName());
+                Object metadataPacket = NMSUtil.createEntityMetadataPacket(npc);
+                
+                for(Player audience : scenePlayer.getAudiences()){
+                    NMSUtil.sendPacket(audience, metadataPacket);
+                }
+                
+            } else {
+                
+                Object animationPacket = NMSUtil.createEntityAnimationPacket(npc, animation.getAnimationNumber());
+                
+                for(Player audience : scenePlayer.getAudiences()){
+                    NMSUtil.sendPacket(audience, animationPacket);
+                }
+                
+            }
+        }catch (Exception e){e.printStackTrace();}
     }
     
     public synchronized void talk(){
@@ -76,6 +107,18 @@ public class NPC {
                     Kuroko.getPlugin().getLogger().warning("Syntax error => " + temp);
                 }
                 
+            } else if (talkLine.contains("animation{")) {
+    
+                String temp = talkLine;
+                talkLine = talkLine.replace("animation{", "").replace("}", "");
+                try {
+                    Animation animation = Animation.valueOf(talkLine);
+                    this.playAnimation(animation);
+                }catch (Exception e){
+                    Kuroko.getPlugin().getLogger().warning("Syntax error => " + temp);
+                    Kuroko.getPlugin().getLogger().warning(e.getMessage());
+                }
+                
             }else {
                 player.sendMessage(talkLine);
             }
@@ -111,7 +154,6 @@ public class NPC {
     
     public void unload(){
         scenePlayer.cancel();
-        this.playerChunkBaseNPCMap.getTrackedNPC().remove(this);
     }
     
     public NPCData getNpcData() {return npcData;}
@@ -121,4 +163,15 @@ public class NPC {
     public Speech getCurrentSpeech() {return currentSpeech;}
     
     public ScenePlayer getScenePlayer() {return scenePlayer;}
+    
+    public Object getEntityPlayerInstance(){
+        for(TrackData trackData : scenePlayer.getRecordData().getTrackData()){
+            if(trackData instanceof PlayerTrackData){
+                PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
+                return playerTrackData.getNPC(scenePlayer.getID());
+            }
+        }
+        
+        return null;
+    }
 }
