@@ -67,11 +67,8 @@ public class kurokoCommand implements CommandExecutor, TabExecutor {
         List<String> list = new ArrayList<>();
 
         if (args.length == 1) {
-            list.add("record");
-            list.add("recorder");
-            list.add("movie");
-            list.add("reload");
-            list.add("help");
+            list.add("spawn");
+            list.add("create");
 
             return list;
         }

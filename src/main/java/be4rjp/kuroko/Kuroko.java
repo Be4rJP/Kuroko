@@ -3,6 +3,7 @@ package be4rjp.kuroko;
 import be4rjp.kuroko.command.kurokoCommand;
 import be4rjp.kuroko.listener.PlayerJoinQuitListener;
 import be4rjp.kuroko.npc.NPCData;
+import be4rjp.kuroko.script.NPCScript;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +20,7 @@ public final class Kuroko extends JavaPlugin {
         plugin = this;
         
         Config.load();
+        NPCScript.loadAllNPCScript();
         NPCData.loadAllNPCData();
     
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -26,8 +28,8 @@ public final class Kuroko extends JavaPlugin {
 
         //Register command executors
         getLogger().info("Registering command executors...");
-        Objects.requireNonNull(getCommand("c4c")).setExecutor(new kurokoCommand());
-        Objects.requireNonNull(getCommand("c4c")).setTabCompleter(new kurokoCommand());
+        Objects.requireNonNull(getCommand("kuroko")).setExecutor(new kurokoCommand());
+        Objects.requireNonNull(getCommand("kuroko")).setTabCompleter(new kurokoCommand());
     }
     
     @Override

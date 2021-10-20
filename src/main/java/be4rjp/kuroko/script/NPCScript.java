@@ -51,6 +51,7 @@ public class NPCScript {
     public NPCScript(String id, File file){
         this.id = id;
         this.file = file;
+        npcScriptMap.put(id, this);
     }
 
     public void load(){
@@ -60,6 +61,7 @@ public class NPCScript {
             String data;
             while ((data = bufferedReader.readLine()) != null) {
                 script.append(data);
+                script.append('\n');
             }
             bufferedReader.close();
         }catch(Exception e){e.printStackTrace();}

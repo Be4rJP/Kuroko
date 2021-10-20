@@ -13,6 +13,7 @@ import be4rjp.kuroko.player.PlayerChunkBaseNPCMap;
 import be4rjp.kuroko.script.NPCScript;
 import be4rjp.kuroko.script.ScriptRunner;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -156,7 +157,7 @@ public class NPC {
                 }
                 
             }else {
-                player.sendMessage(talkLine);
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', talkLine));
             }
         }
         
@@ -171,6 +172,8 @@ public class NPC {
             currentSpeech = null;
             currentTalkIndex = 0;
             Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
+            
+            this.runScriptFunction("onSpeechEnd", kurokoPlayer, this);
             
             talkCoolTime = System.currentTimeMillis() + 2000;
         }else{
@@ -205,14 +208,21 @@ public class NPC {
 
     public KurokoPlayer getKurokoPlayer() {return kurokoPlayer;}
 
-    public void setSpikeFunction(int i, String function){this.spikeMap.put(i, function);}
+    public void setSpikeFunction(int i, String function) {this.spikeMap.put(i, function);}
+    
+    public void removeSpikeFunction(int i){this.spikeMap.remove(i);}
 
     public void setPause(boolean is){this.scenePlayer.setPause(is);}
+    
+    public int getTick(){return this.scenePlayer.getTick();}
 
     public void setSpeech(Speech speech){
         this.currentSpeech = speech;
         this.currentTalkIndex = 0;
+        this.setPause(true);
     }
+    
+    public boolean hasSpeech(){return currentSpeech != null;}
     
     public Object getEntityPlayerInstance(){
         for(TrackData trackData : scenePlayer.getRecordData().getTrackData()){

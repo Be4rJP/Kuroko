@@ -7,3 +7,13 @@ default-load-npc:
 
 # NPCのスクリプトを実行するためのエンジン名
 javascript-engine: 'JavaScript'
+
+# JavaScriptで使うためにロードするクラス
+load-class:
+  - 'be4rjp.kuroko.npc.NPC'
+  - 'be4rjp.kuroko.npc.NPCData'
+  - 'be4rjp.kuroko.npc.Speech'
+  - 'be4rjp.kuroko.npc.Animation'
+  - 'be4rjp.kuroko.player.KurokoPlayer'
+  - 'org.bukkit.Material'
+  - 'org.bukkit.inventory.ItemStack'

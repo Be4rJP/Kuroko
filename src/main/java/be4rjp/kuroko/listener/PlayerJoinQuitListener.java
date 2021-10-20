@@ -36,7 +36,10 @@ public class PlayerJoinQuitListener implements Listener {
                 Set<NPCData> defaultLoadDataSet = ConcurrentHashMap.newKeySet();
                 for(String name : Config.getDefaultLoadNPCList()){
                     NPCData npcData = NPCData.getNPCData(name);
-                    if(npcData == null) continue;
+                    if(npcData == null){
+                        Kuroko.getPlugin().getLogger().warning(name + " is not found.");
+                        continue;
+                    }
                     
                     defaultLoadDataSet.add(npcData);
                 }

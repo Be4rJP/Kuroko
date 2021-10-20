@@ -14,12 +14,16 @@ public class Config {
 
     private static String javascriptEngine;
     
+    private static List<String> loadClasses = new ArrayList<>();
+    
     public static int getViewDistance() {return viewDistance;}
     
     public static List<String> getDefaultLoadNPCList() {return defaultLoadNPC;}
 
     public static String getJavascriptEngine() {return javascriptEngine;}
-
+    
+    public static List<String> getLoadClasses() {return loadClasses;}
+    
     public static void load(){
         File file = new File("plugins/Kuroko", "config.yml");
         file.getParentFile().mkdirs();
@@ -34,5 +38,6 @@ public class Config {
         if(yml.contains("view-distance")) viewDistance = yml.getInt("view-distance");
         if(yml.contains("default-load-npc")) defaultLoadNPC = yml.getStringList("default-load-npc");
         if(yml.contains("javascript-engine")) javascriptEngine = yml.getString("javascript-engine");
+        if(yml.contains("load-class")) loadClasses = yml.getStringList("load-class");
     }
 }

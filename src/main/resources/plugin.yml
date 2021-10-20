@@ -4,3 +4,14 @@ main: be4rjp.kuroko.Kuroko
 api-version: 1.15
 
 depend: [Cinema4C]
+
+#--------------------------------------
+commands:
+  kuroko:
+    description: Type /kuroko help
+    usage: Type /kuroko help
+    permission: kuroko.admin
+#--------------------------------------
+permissions:
+  kuroko.admin:
+    description: admin command.

@@ -62,7 +62,7 @@ public class NPCData {
     //停止tick
     private int endTick = 0;
     //セリフ
-    private List<Speech> speeches = new ArrayList<>();
+    private List<Speech> speeches;
     //描画範囲外でアンロードさせるかどうか
     private boolean distanceUnload = true;
     //セリフをリセットする距離
@@ -109,7 +109,12 @@ public class NPCData {
         if(yml.contains("base-location")) this.baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location"));
         if(yml.contains("distance-unload")) this.distanceUnload = yml.getBoolean("distance-unload");
         if(yml.contains("speech-reset-distance")) this.speechResetDistance = yml.getDouble("speech-reset-distance");
-        if(yml.contains("script")) this.npcScript = NPCScript.getNPCScript(yml.getString("script"));
+        if(yml.contains("script")){
+            this.npcScript = NPCScript.getNPCScript(yml.getString("script"));
+            if(this.npcScript == null){
+                Kuroko.getPlugin().getLogger().info("Javascript file '" + yml.getString("script") + "' is not found.");
+            }
+        }
         if(yml.contains("disable-speech")) this.disableSpeech = yml.getBoolean("disable-speech");
         
         if(yml.contains("speech")){
