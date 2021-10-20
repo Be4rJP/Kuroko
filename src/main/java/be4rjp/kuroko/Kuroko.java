@@ -1,6 +1,7 @@
 package be4rjp.kuroko;
 
 import be4rjp.kuroko.command.kurokoCommand;
+import be4rjp.kuroko.listener.PlayerItemSwitchListener;
 import be4rjp.kuroko.listener.PlayerJoinQuitListener;
 import be4rjp.kuroko.npc.NPCData;
 import be4rjp.kuroko.script.NPCScript;
@@ -25,6 +26,7 @@ public final class Kuroko extends JavaPlugin {
     
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new PlayerJoinQuitListener(), this);
+        pluginManager.registerEvents(new PlayerItemSwitchListener(), this);
 
         //Register command executors
         getLogger().info("Registering command executors...");

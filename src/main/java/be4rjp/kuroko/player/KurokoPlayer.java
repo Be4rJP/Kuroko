@@ -1,5 +1,6 @@
 package be4rjp.kuroko.player;
 
+import be4rjp.cinema4c.recorder.SceneRecorder;
 import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.npc.NPCData;
 import org.bukkit.World;
@@ -29,6 +30,8 @@ public class KurokoPlayer {
     private boolean unloaded = false;
 
     private String currentSetupNPCName = null;
+    
+    private SceneRecorder sceneRecorder = null;
     
     public synchronized PlayerChunkBaseNPCMap getPlayerChunkBaseNPCMaps(World world) {return chunkBaseNPCMaps.computeIfAbsent(world, PlayerChunkBaseNPCMap::new);}
     
@@ -63,4 +66,8 @@ public class KurokoPlayer {
     public String getCurrentSetupNPCName() {return currentSetupNPCName;}
 
     public void setCurrentSetupNPCName(String currentSetupNPCName) {this.currentSetupNPCName = currentSetupNPCName;}
+    
+    public SceneRecorder getSceneRecorder() {return sceneRecorder;}
+    
+    public void setSceneRecorder(SceneRecorder sceneRecorder) {this.sceneRecorder = sceneRecorder;}
 }

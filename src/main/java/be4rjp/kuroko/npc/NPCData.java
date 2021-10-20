@@ -39,7 +39,6 @@ public class NPCData {
                     YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
                     NPCData npcData = new NPCData(id);
                     npcData.load(yml);
-                    npcDataMap.put(id, npcData);
                 }catch (Exception e){e.printStackTrace();}
             }
         }
@@ -73,7 +72,18 @@ public class NPCData {
     private boolean disableSpeech = false;
     
     
-    public NPCData(String id){this.id = id;}
+    public NPCData(String id){
+        this.id = id;
+        npcDataMap.put(id, this);
+    }
+    
+    public NPCData(String id, RecordData recordData, Location location, int endTick){
+        this.id = id;
+        this.recordData = recordData;
+        this.baseLocation = location;
+        this.endTick = endTick;
+        npcDataMap.put(id, this);
+    }
     
     public boolean isLoop() {return loop;}
     
@@ -123,5 +133,17 @@ public class NPCData {
                 this.speeches.add(new Speech(yml.getStringList("speech." + key)));
             }
         }
+    }
+    
+    public void save(YamlConfiguration yml){
+        yml.set("record-data", id);
+        yml.set("loop", loop);
+        yml.set("start-tick", startTick);
+        yml.set("end-tick", endTick);
+        yml.set("base-location", baseLocation.getWorld().getName() + ", " + baseLocation.getBlockX() + ", " + baseLocation.getBlockY() + ", " + baseLocation.getBlockZ());
+        yml.set("distance-unload", distanceUnload);
+        yml.set("speech-reset-distance", speechResetDistance);
+        yml.set("script", "");
+        yml.set("disable-speech", disableSpeech);
     }
 }
