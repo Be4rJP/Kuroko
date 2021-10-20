@@ -4,3 +4,6 @@ view-distance: 4
 # デフォルトでロードするNPCのリスト
 default-load-npc:
   - 'example-npc'
+
+# NPCのスクリプトを実行するためのエンジン名
+javascript-engine: 'JavaScript'

@@ -3,6 +3,7 @@ package be4rjp.kuroko.npc;
 import be4rjp.cinema4c.data.record.RecordData;
 import be4rjp.cinema4c.recorder.RecordManager;
 import be4rjp.kuroko.Kuroko;
+import be4rjp.kuroko.script.NPCScript;
 import be4rjp.kuroko.util.ConfigUtil;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +16,8 @@ public class NPCData {
     private static Map<String, NPCData> npcDataMap = new HashMap<>();
     
     public static NPCData getNPCData(String name){return npcDataMap.get(name);}
+
+    public static Set<String> getAllDataName(){return npcDataMap.keySet();}
     
     public static void loadAllNPCData(){
         Kuroko.getPlugin().getLogger().info("Loading npc data...");
@@ -59,11 +62,15 @@ public class NPCData {
     //停止tick
     private int endTick = 0;
     //セリフ
-    private List<Speech> speeches;
+    private List<Speech> speeches = new ArrayList<>();
     //描画範囲外でアンロードさせるかどうか
     private boolean distanceUnload = true;
     //セリフをリセットする距離
     private double speechResetDistance = -1;
+    //スクリプト
+    private NPCScript npcScript = null;
+    //会話機能の無効化
+    private boolean disableSpeech = false;
     
     
     public NPCData(String id){this.id = id;}
@@ -87,7 +94,11 @@ public class NPCData {
     public boolean isDistanceUnload() {return distanceUnload;}
     
     public double getSpeechResetDistance() {return speechResetDistance;}
-    
+
+    public NPCScript getNpcScript() {return npcScript;}
+
+    public boolean isDisableSpeech() {return disableSpeech;}
+
     public void load(YamlConfiguration yml){
         this.yml = yml;
         
@@ -98,6 +109,8 @@ public class NPCData {
         if(yml.contains("base-location")) this.baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location"));
         if(yml.contains("distance-unload")) this.distanceUnload = yml.getBoolean("distance-unload");
         if(yml.contains("speech-reset-distance")) this.speechResetDistance = yml.getDouble("speech-reset-distance");
+        if(yml.contains("script")) this.npcScript = NPCScript.getNPCScript(yml.getString("script"));
+        if(yml.contains("disable-speech")) this.disableSpeech = yml.getBoolean("disable-speech");
         
         if(yml.contains("speech")){
             this.speeches = new ArrayList<>();

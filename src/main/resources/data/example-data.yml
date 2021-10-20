@@ -5,6 +5,8 @@ start-tick: 4
 end-tick: 516
 distance-unload: true
 speech-reset-distance: 10
+disable-speech: false
+script: 'example'
 
 speech:
   test1:

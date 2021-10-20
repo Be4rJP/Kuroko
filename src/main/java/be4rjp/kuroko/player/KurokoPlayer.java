@@ -27,6 +27,8 @@ public class KurokoPlayer {
     private final Map<World, PlayerChunkBaseNPCMap> chunkBaseNPCMaps = new HashMap<>();
     
     private boolean unloaded = false;
+
+    private String currentSetupNPCName = null;
     
     public synchronized PlayerChunkBaseNPCMap getPlayerChunkBaseNPCMaps(World world) {return chunkBaseNPCMaps.computeIfAbsent(world, PlayerChunkBaseNPCMap::new);}
     
@@ -57,4 +59,8 @@ public class KurokoPlayer {
             chunkBaseNPCMaps.values().forEach(PlayerChunkBaseNPCMap::unloadAllChunkNPC);
         });
     }
+
+    public String getCurrentSetupNPCName() {return currentSetupNPCName;}
+
+    public void setCurrentSetupNPCName(String currentSetupNPCName) {this.currentSetupNPCName = currentSetupNPCName;}
 }

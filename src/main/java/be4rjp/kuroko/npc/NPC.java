@@ -10,8 +10,16 @@ import be4rjp.kuroko.event.AsyncNPCSpeechEndEvent;
 import be4rjp.kuroko.event.AsyncNPCSpeechInitializeEvent;
 import be4rjp.kuroko.player.KurokoPlayer;
 import be4rjp.kuroko.player.PlayerChunkBaseNPCMap;
+import be4rjp.kuroko.script.NPCScript;
+import be4rjp.kuroko.script.ScriptRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NPC {
     
@@ -31,6 +39,11 @@ public class NPC {
     
     //話しかけるときのクールタイム
     private long talkCoolTime = 0;
+
+    //スクリプト
+    private final ScriptRunner scriptRunner;
+    //スパイク
+    private Map<Integer, String> spikeMap = new ConcurrentHashMap<>();
     
     
     public NPC(NPCData npcData, KurokoPlayer kurokoPlayer, PlayerChunkBaseNPCMap playerChunkBaseNPCMap){
@@ -38,11 +51,30 @@ public class NPC {
         this.kurokoPlayer = kurokoPlayer;
         this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation().getWorld(), npcData.getStartTick(), npcData.getEndTick());
         this.playerChunkBaseNPCMap = playerChunkBaseNPCMap;
-        
+
+        NPCScript npcScript = npcData.getNpcScript();
+        if(npcScript == null){
+            this.scriptRunner = null;
+        }else{
+            this.scriptRunner = npcScript.createScriptRunner();
+        }
+
+        this.runScriptFunction("initialize", this);
+
         scenePlayer.addAudience(kurokoPlayer.getPlayer());
         scenePlayer.initialize();
+        scenePlayer.getRunnableSet().add(() -> {
+            int tick = scenePlayer.getTick();
+            if(spikeMap.containsKey(tick)){
+                runScriptFunction(spikeMap.get(tick));
+            }
+        });
         scenePlayer.start(npcData.isLoop() ? ScenePlayer.PlayMode.LOOP : ScenePlayer.PlayMode.ALL_PLAY);
         scenePlayer.getCancelRunnableSet().add(() -> NPC.this.playerChunkBaseNPCMap.getTrackedNPC().remove(NPC.this));
+    }
+
+    public void playAnimation(String animation){
+        this.playAnimation(Animation.valueOf(animation));
     }
     
     public void playAnimation(Animation animation){
@@ -74,7 +106,11 @@ public class NPC {
     
     public synchronized void talk(){
         if(talkCoolTime > System.currentTimeMillis() || npcData.getSpeeches() == null) return;
-        
+
+        this.runScriptFunction("onClick", kurokoPlayer, this);
+
+        if(npcData.isDisableSpeech()) return;
+
         Player player = kurokoPlayer.getPlayer();
         
         if(currentSpeech == null){
@@ -151,10 +187,13 @@ public class NPC {
         currentTalkIndex = 0;
         scenePlayer.setPause(false);
     }
-    
-    public void unload(){
-        scenePlayer.cancel();
+
+    public void runScriptFunction(String function, Object... objects){
+        if(this.scriptRunner == null) return;
+        this.scriptRunner.runFunction(function, objects);
     }
+    
+    public void unload(){scenePlayer.cancel();}
     
     public NPCData getNpcData() {return npcData;}
     
@@ -163,6 +202,17 @@ public class NPC {
     public Speech getCurrentSpeech() {return currentSpeech;}
     
     public ScenePlayer getScenePlayer() {return scenePlayer;}
+
+    public KurokoPlayer getKurokoPlayer() {return kurokoPlayer;}
+
+    public void setSpikeFunction(int i, String function){this.spikeMap.put(i, function);}
+
+    public void setPause(boolean is){this.scenePlayer.setPause(is);}
+
+    public void setSpeech(Speech speech){
+        this.currentSpeech = speech;
+        this.currentTalkIndex = 0;
+    }
     
     public Object getEntityPlayerInstance(){
         for(TrackData trackData : scenePlayer.getRecordData().getTrackData()){
