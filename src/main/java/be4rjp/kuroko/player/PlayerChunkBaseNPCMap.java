@@ -143,6 +143,15 @@ public class PlayerChunkBaseNPCMap {
     
     public Set<NPC> getTrackedNPC() {return trackedNPC;}
     
+    public void removeNPCData(NPCData npcData){
+        for(Map.Entry<ChunkPosition, Set<NPCData>> entry : chunkNPCDataMap.entrySet()){
+            ChunkPosition chunkPosition = entry.getKey();
+            Set<NPCData> npcDataSet = entry.getValue();
+            
+            npcDataSet.remove(npcData);
+        }
+    }
+    
     public static Set<ChunkPosition> getRangeChunks(KurokoPlayer kurokoPlayer){
         int range = Config.getViewDistance();
         Location location = kurokoPlayer.getPlayer().getLocation();

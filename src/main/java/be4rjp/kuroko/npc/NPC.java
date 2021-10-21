@@ -71,7 +71,13 @@ public class NPC {
             }
         });
         scenePlayer.start(npcData.isLoop() ? ScenePlayer.PlayMode.LOOP : ScenePlayer.PlayMode.ALL_PLAY);
-        scenePlayer.getCancelRunnableSet().add(() -> NPC.this.playerChunkBaseNPCMap.getTrackedNPC().remove(NPC.this));
+        scenePlayer.getCancelRunnableSet().add(() -> {
+            if(npcData.isLoop()) NPC.this.playerChunkBaseNPCMap.getTrackedNPC().remove(NPC.this);
+            else {
+                NPC.this.playerChunkBaseNPCMap.removeNPCData(npcData);
+                NPC.this.playerChunkBaseNPCMap.getTrackedNPC().remove(NPC.this);
+            }
+        });
     }
 
     public void playAnimation(String animation){
