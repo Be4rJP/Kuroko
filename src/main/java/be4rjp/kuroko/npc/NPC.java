@@ -128,7 +128,7 @@ public class NPC {
             
             currentTalkIndex = 0;
             
-            scenePlayer.setPause(true);
+            if(npcData.getNpcScript() == null) scenePlayer.setPause(true);
         }
         
         
@@ -177,7 +177,7 @@ public class NPC {
             Bukkit.getPluginManager().callEvent(speechEndEvent);
             currentSpeech = null;
             currentTalkIndex = 0;
-            Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
+            if(npcData.getNpcScript() == null) Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
             
             this.runScriptFunction("onSpeechEnd", kurokoPlayer, this);
             
