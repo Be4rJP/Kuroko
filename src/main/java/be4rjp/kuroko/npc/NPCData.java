@@ -20,6 +20,8 @@ public class NPCData {
     public static Set<String> getAllDataName(){return npcDataMap.keySet();}
     
     public static void loadAllNPCData(){
+        npcDataMap.clear();
+        
         Kuroko.getPlugin().getLogger().info("Loading npc data...");
         File dir = new File("plugins/Kuroko/data");
     

@@ -1,7 +1,9 @@
 package be4rjp.kuroko.command;
 
+import be4rjp.kuroko.Config;
 import be4rjp.kuroko.npc.NPCData;
 import be4rjp.kuroko.player.KurokoPlayer;
+import be4rjp.kuroko.script.NPCScript;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -55,6 +57,14 @@ public class kurokoCommand implements CommandExecutor, TabExecutor {
                 player.sendMessage(ChatColor.GREEN + "アイテム持ち替えキーで記録を開始し、もう一度キーを押すと記録を終了します。");
                 return true;
             }
+            
+            case "reload":{
+                Config.load();
+                NPCScript.loadAllNPCScript();
+                NPCData.loadAllNPCData();
+                KurokoPlayer.reload();
+                return true;
+            }
         }
 
         return true;
@@ -69,6 +79,7 @@ public class kurokoCommand implements CommandExecutor, TabExecutor {
         if (args.length == 1) {
             list.add("spawn");
             list.add("create");
+            list.add("reload");
 
             return list;
         }

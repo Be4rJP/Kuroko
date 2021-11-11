@@ -18,6 +18,8 @@ public class NPCScript {
 
 
     public static void loadAllNPCScript() {
+        npcScriptMap.clear();
+        
         Kuroko.getPlugin().getLogger().info("Loading scripts...");
         File dir = new File("plugins/Kuroko/script");
 

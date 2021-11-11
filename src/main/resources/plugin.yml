@@ -3,6 +3,7 @@ version: ${project.version}
 main: be4rjp.kuroko.Kuroko
 api-version: 1.15
 
+softdepend: [SlimeWorldManager]
 depend: [Cinema4C]
 
 #--------------------------------------

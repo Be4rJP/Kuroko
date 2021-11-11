@@ -19,6 +19,8 @@ public class KurokoPlayer {
     
     private static void removePlayer(Player player){playerMap.remove(player);}
     
+    public static void reload(){playerMap.clear();}
+    
     
     
     private final Player player;
