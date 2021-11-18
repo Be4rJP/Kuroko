@@ -3,7 +3,7 @@ package be4rjp.kuroko.npc;
 import be4rjp.cinema4c.data.record.RecordData;
 import be4rjp.cinema4c.recorder.RecordManager;
 import be4rjp.kuroko.Kuroko;
-import be4rjp.kuroko.script.NPCScript;
+import be4rjp.kuroko.script.Script;
 import be4rjp.kuroko.util.ConfigUtil;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -69,7 +69,7 @@ public class NPCData {
     //セリフをリセットする距離
     private double speechResetDistance = -1;
     //スクリプト
-    private NPCScript npcScript = null;
+    private Script script = null;
     //会話機能の無効化
     private boolean disableSpeech = false;
     
@@ -107,7 +107,7 @@ public class NPCData {
     
     public double getSpeechResetDistance() {return speechResetDistance;}
 
-    public NPCScript getNpcScript() {return npcScript;}
+    public Script getNpcScript() {return script;}
 
     public boolean isDisableSpeech() {return disableSpeech;}
 
@@ -122,8 +122,8 @@ public class NPCData {
         if(yml.contains("distance-unload")) this.distanceUnload = yml.getBoolean("distance-unload");
         if(yml.contains("speech-reset-distance")) this.speechResetDistance = yml.getDouble("speech-reset-distance");
         if(yml.contains("script")){
-            this.npcScript = NPCScript.getNPCScript(yml.getString("script"));
-            if(this.npcScript == null){
+            this.script = Script.getNPCScript(yml.getString("script"));
+            if(this.script == null){
                 Kuroko.getPlugin().getLogger().info("Javascript file '" + yml.getString("script") + "' is not found.");
             }
         }

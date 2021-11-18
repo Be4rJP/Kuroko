@@ -4,7 +4,7 @@ import be4rjp.kuroko.command.kurokoCommand;
 import be4rjp.kuroko.listener.PlayerItemSwitchListener;
 import be4rjp.kuroko.listener.PlayerJoinQuitListener;
 import be4rjp.kuroko.npc.NPCData;
-import be4rjp.kuroko.script.NPCScript;
+import be4rjp.kuroko.script.Script;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,7 +21,7 @@ public final class Kuroko extends JavaPlugin {
         plugin = this;
         
         Config.load();
-        NPCScript.loadAllNPCScript();
+        Script.loadAllNPCScript();
         NPCData.loadAllNPCData();
     
         PluginManager pluginManager = Bukkit.getPluginManager();

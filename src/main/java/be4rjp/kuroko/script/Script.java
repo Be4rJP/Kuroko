@@ -10,11 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NPCScript {
+public class Script {
 
-    private static Map<String, NPCScript> npcScriptMap = new HashMap<>();
+    private static Map<String, Script> npcScriptMap = new HashMap<>();
 
-    public static NPCScript getNPCScript(String id){return npcScriptMap.get(id);}
+    public static Script getNPCScript(String id){return npcScriptMap.get(id);}
 
 
     public static void loadAllNPCScript() {
@@ -35,8 +35,9 @@ public class NPCScript {
             for (File file : files) {
                 Kuroko.getPlugin().getLogger().info(file.getName());
                 String id = file.getName().replace(".js", "");
-                NPCScript npcScript = new NPCScript(id, file);
-                npcScript.load();
+                Script script = new Script(id, file);
+                script.load();
+                npcScriptMap.put(id, script);
             }
         }
     }
@@ -50,10 +51,9 @@ public class NPCScript {
 
     private String script;
 
-    public NPCScript(String id, File file){
+    public Script(String id, File file){
         this.id = id;
         this.file = file;
-        npcScriptMap.put(id, this);
     }
 
     public void load(){

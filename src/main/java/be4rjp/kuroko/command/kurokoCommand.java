@@ -3,7 +3,7 @@ package be4rjp.kuroko.command;
 import be4rjp.kuroko.Config;
 import be4rjp.kuroko.npc.NPCData;
 import be4rjp.kuroko.player.KurokoPlayer;
-import be4rjp.kuroko.script.NPCScript;
+import be4rjp.kuroko.script.Script;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,7 +60,7 @@ public class kurokoCommand implements CommandExecutor, TabExecutor {
             
             case "reload":{
                 Config.load();
-                NPCScript.loadAllNPCScript();
+                Script.loadAllNPCScript();
                 NPCData.loadAllNPCData();
                 KurokoPlayer.reload();
                 return true;

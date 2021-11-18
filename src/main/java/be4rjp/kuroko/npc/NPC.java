@@ -10,15 +10,12 @@ import be4rjp.kuroko.event.AsyncNPCSpeechEndEvent;
 import be4rjp.kuroko.event.AsyncNPCSpeechInitializeEvent;
 import be4rjp.kuroko.player.KurokoPlayer;
 import be4rjp.kuroko.player.PlayerChunkBaseNPCMap;
-import be4rjp.kuroko.script.NPCScript;
+import be4rjp.kuroko.script.Script;
 import be4rjp.kuroko.script.ScriptRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,11 +50,11 @@ public class NPC {
         this.scenePlayer = new ScenePlayer(npcData.getRecordData(), npcData.getBaseLocation().getWorld(), npcData.getStartTick(), npcData.getEndTick());
         this.playerChunkBaseNPCMap = playerChunkBaseNPCMap;
 
-        NPCScript npcScript = npcData.getNpcScript();
-        if(npcScript == null){
+        Script script = npcData.getNpcScript();
+        if(script == null){
             this.scriptRunner = null;
         }else{
-            this.scriptRunner = npcScript.createScriptRunner();
+            this.scriptRunner = script.createScriptRunner();
         }
 
         this.runScriptFunction("initialize", this);

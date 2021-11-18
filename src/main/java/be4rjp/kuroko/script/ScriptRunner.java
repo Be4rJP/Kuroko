@@ -1,14 +1,10 @@
 package be4rjp.kuroko.script;
 
 import be4rjp.kuroko.Config;
-import be4rjp.kuroko.npc.NPC;
-import be4rjp.kuroko.npc.Speech;
-import be4rjp.kuroko.player.KurokoPlayer;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,12 +12,12 @@ public class ScriptRunner {
     
     private static Map<String, Class<?>> classMap = new ConcurrentHashMap<>();
 
-    private final NPCScript npcScript;
+    private final Script script;
     private final ScriptEngineManager scriptEngineManager;
     private final ScriptEngine scriptEngine;
 
-    public ScriptRunner(NPCScript npcScript){
-        this.npcScript = npcScript;
+    public ScriptRunner(Script script){
+        this.script = script;
         this.scriptEngineManager = new ScriptEngineManager();
         this.scriptEngine = scriptEngineManager.getEngineByName(Config.getJavascriptEngine());
         try {
@@ -38,7 +34,7 @@ public class ScriptRunner {
                 scriptEngine.put("CLASS_" + simpleName, clazz);
             }
             
-            scriptEngine.eval(npcScript.getScript());
+            scriptEngine.eval(script.getScript());
         } catch (Exception e) {
             e.printStackTrace();
         }
