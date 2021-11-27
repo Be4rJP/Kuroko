@@ -143,6 +143,8 @@ public class PlayerChunkBaseNPCMap {
     
     public Set<NPC> getTrackedNPC() {return trackedNPC;}
     
+    public Set<NPC> getHideNPC() {return hideNPC;}
+    
     public void removeNPCData(NPCData npcData){
         for(Map.Entry<ChunkPosition, Set<NPCData>> entry : chunkNPCDataMap.entrySet()){
             Set<NPCData> npcDataSet = entry.getValue();
