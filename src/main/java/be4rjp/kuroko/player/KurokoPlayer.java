@@ -37,6 +37,8 @@ public class KurokoPlayer {
     
     public synchronized PlayerChunkBaseNPCMap getPlayerChunkBaseNPCMaps(World world) {return chunkBaseNPCMaps.computeIfAbsent(world, PlayerChunkBaseNPCMap::new);}
     
+    public synchronized PlayerChunkBaseNPCMap getPlayerChunkBaseNPCMapsNotCompute(World world) {return chunkBaseNPCMaps.get(world);}
+    
     public KurokoPlayer(Player player){
         this.player = player;
         this.asyncNPCTracker = new AsyncNPCTracker(this);
@@ -50,6 +52,11 @@ public class KurokoPlayer {
         
         PlayerChunkBaseNPCMap playerChunkBaseNPCMap = this.getPlayerChunkBaseNPCMaps(npcData.getBaseLocation().getWorld());
         playerChunkBaseNPCMap.addNPC(npcData);
+    }
+    
+    public synchronized void removeNPC(NPCData npcData){
+        PlayerChunkBaseNPCMap playerChunkBaseNPCMap = this.getPlayerChunkBaseNPCMapsNotCompute(npcData.getBaseLocation().getWorld());
+        if(playerChunkBaseNPCMap != null) playerChunkBaseNPCMap.removeNPCData(npcData);
     }
     
     public synchronized void unload(){

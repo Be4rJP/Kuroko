@@ -1,8 +1,5 @@
 package be4rjp.kuroko.util;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+
 import org.bukkit.util.Vector;
 
 public class ConfigUtil {
@@ -13,7 +10,7 @@ public class ConfigUtil {
      * @param locString
      * @return
      */
-    public static Location getLocationByString(String locString){
+    public static KurokoLocation getLocationByString(String locString){
         locString = locString.replace(" ", "");
         String[] args = locString.split(",");
         
@@ -22,8 +19,6 @@ public class ConfigUtil {
         }
         
         String worldName = args[0];
-        World world = Bukkit.getWorld(worldName);
-        if(world == null) Bukkit.createWorld(new WorldCreator(worldName));
         
         double x = Double.parseDouble(args[1]);
         double y = Double.parseDouble(args[2]);
@@ -36,7 +31,7 @@ public class ConfigUtil {
             pitch = Float.parseFloat(args[5]);
         }
         
-        return new Location(world, x, y, z, yaw, pitch);
+        return new KurokoLocation(worldName, x, y, z, yaw, pitch);
     }
     
     

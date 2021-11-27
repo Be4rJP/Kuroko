@@ -2,9 +2,11 @@ package be4rjp.kuroko.npc;
 
 import be4rjp.cinema4c.data.record.RecordData;
 import be4rjp.cinema4c.recorder.RecordManager;
+import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Kuroko;
 import be4rjp.kuroko.script.Script;
 import be4rjp.kuroko.util.ConfigUtil;
+import be4rjp.kuroko.util.KurokoLocation;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -57,7 +59,7 @@ public class NPCData {
     //標準座標
     private Location baseLocation;
     //ループさせるかどうか
-    private boolean loop = false;
+    private boolean loop = true;
     //開始tick
     private int startTick = 0;
     //停止tick
@@ -118,7 +120,11 @@ public class NPCData {
         if(yml.contains("loop")) this.loop = yml.getBoolean("loop");
         if(yml.contains("start-tick")) this.startTick = yml.getInt("start-tick");
         if(yml.contains("end-tick")) this.endTick = yml.getInt("end-tick");
-        if(yml.contains("base-location")) this.baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location"));
+        if(yml.contains("base-location")){
+            TaskHandler.runSync(() -> {
+                this.baseLocation = ConfigUtil.getLocationByString(yml.getString("base-location")).asLocationAtMainThread();
+            });
+        }
         if(yml.contains("distance-unload")) this.distanceUnload = yml.getBoolean("distance-unload");
         if(yml.contains("speech-reset-distance")) this.speechResetDistance = yml.getDouble("speech-reset-distance");
         if(yml.contains("script")){

@@ -145,9 +145,7 @@ public class PlayerChunkBaseNPCMap {
     
     public void removeNPCData(NPCData npcData){
         for(Map.Entry<ChunkPosition, Set<NPCData>> entry : chunkNPCDataMap.entrySet()){
-            ChunkPosition chunkPosition = entry.getKey();
             Set<NPCData> npcDataSet = entry.getValue();
-            
             npcDataSet.remove(npcData);
         }
     }
