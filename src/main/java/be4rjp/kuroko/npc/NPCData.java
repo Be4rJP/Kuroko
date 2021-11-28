@@ -6,12 +6,12 @@ import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Kuroko;
 import be4rjp.kuroko.script.Script;
 import be4rjp.kuroko.util.ConfigUtil;
-import be4rjp.kuroko.util.KurokoLocation;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class NPCData {
 
@@ -74,7 +74,6 @@ public class NPCData {
     private Script script = null;
     //会話機能の無効化
     private boolean disableSpeech = false;
-    
     
     public NPCData(String id){
         this.id = id;

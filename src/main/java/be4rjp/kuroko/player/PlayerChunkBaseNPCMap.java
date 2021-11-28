@@ -6,6 +6,7 @@ import be4rjp.cinema4c.nms.NMSUtil;
 import be4rjp.cinema4c.util.LocationUtil;
 import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Config;
+import be4rjp.kuroko.npc.EquipmentData;
 import be4rjp.kuroko.npc.NPC;
 import be4rjp.kuroko.npc.NPCData;
 import be4rjp.kuroko.util.ChunkPosition;
@@ -27,6 +28,8 @@ public class PlayerChunkBaseNPCMap {
     
     private final Set<NPC> hideNPC = ConcurrentHashMap.newKeySet();
     
+    private final Map<NPCData, EquipmentData> equipmentDataMap = new ConcurrentHashMap<>();
+    
     public PlayerChunkBaseNPCMap(World world){
         this.world = world;
     }
@@ -36,6 +39,11 @@ public class PlayerChunkBaseNPCMap {
         Location baseLocation = npcData.getBaseLocation();
         ChunkPosition chunkPosition = new ChunkPosition(baseLocation.getBlockX() >> 4, baseLocation.getBlockZ() >> 4);
         chunkNPCDataMap.computeIfAbsent(chunkPosition, k -> ConcurrentHashMap.newKeySet()).add(npcData);
+    }
+    
+    
+    public void setEquipmentData(EquipmentData equipmentData){
+        this.equipmentDataMap.put(equipmentData.getNpcData(), equipmentData);
     }
     
     
@@ -91,7 +99,13 @@ public class PlayerChunkBaseNPCMap {
                 }
         
                 if(npcInstance == null){
-                    TaskHandler.runSync(() -> trackedNPC.add(new NPC(npcData, kurokoPlayer, PlayerChunkBaseNPCMap.this)));
+                    TaskHandler.runSync(() -> {
+                        NPC npc = new NPC(npcData, kurokoPlayer, PlayerChunkBaseNPCMap.this);
+                        trackedNPC.add(npc);
+                        
+                        EquipmentData equipmentData = this.equipmentDataMap.get(npcData);
+                        if(equipmentData != null) equipmentData.sendEquipmentPacket(npc);
+                    });
                 }else{
                     
                     boolean isHide = false;
@@ -107,6 +121,9 @@ public class PlayerChunkBaseNPCMap {
                             if(trackData instanceof PlayerTrackData){
                                 PlayerTrackData playerTrackData = (PlayerTrackData) trackData;
                                 playerTrackData.spawnNPC(npcInstance.getScenePlayer());
+    
+                                EquipmentData equipmentData = this.equipmentDataMap.get(npcData);
+                                if(equipmentData != null) equipmentData.sendEquipmentPacket(npcInstance);
                             }
                         }
                         hideNPC.remove(npcInstance);

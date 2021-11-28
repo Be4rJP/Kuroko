@@ -15,5 +15,7 @@ load-class:
   - 'be4rjp.kuroko.npc.Speech'
   - 'be4rjp.kuroko.npc.Animation'
   - 'be4rjp.kuroko.player.KurokoPlayer'
+  - 'be4rjp.kuroko.npc.EquipmentData'
+  - 'be4rjp.cinema4c.nms.WrappedItemSlot'
   - 'org.bukkit.Material'
   - 'org.bukkit.inventory.ItemStack'

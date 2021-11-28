@@ -2,6 +2,7 @@ package be4rjp.kuroko.player;
 
 import be4rjp.cinema4c.recorder.SceneRecorder;
 import be4rjp.cinema4c.util.TaskHandler;
+import be4rjp.kuroko.npc.EquipmentData;
 import be4rjp.kuroko.npc.NPCData;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -57,6 +58,13 @@ public class KurokoPlayer {
     public synchronized void removeNPC(NPCData npcData){
         PlayerChunkBaseNPCMap playerChunkBaseNPCMap = this.getPlayerChunkBaseNPCMapsNotCompute(npcData.getBaseLocation().getWorld());
         if(playerChunkBaseNPCMap != null) playerChunkBaseNPCMap.removeNPCData(npcData);
+    }
+    
+    public synchronized void setEquipmentData(EquipmentData equipmentData){
+        NPCData npcData = equipmentData.getNpcData();
+    
+        PlayerChunkBaseNPCMap playerChunkBaseNPCMap = this.getPlayerChunkBaseNPCMaps(npcData.getBaseLocation().getWorld());
+        playerChunkBaseNPCMap.setEquipmentData(equipmentData);
     }
     
     public synchronized void unload(){

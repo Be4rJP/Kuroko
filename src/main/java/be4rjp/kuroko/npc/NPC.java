@@ -3,6 +3,7 @@ package be4rjp.kuroko.npc;
 import be4rjp.cinema4c.data.record.tracking.PlayerTrackData;
 import be4rjp.cinema4c.data.record.tracking.TrackData;
 import be4rjp.cinema4c.nms.NMSUtil;
+import be4rjp.cinema4c.nms.WrappedItemSlot;
 import be4rjp.cinema4c.player.ScenePlayer;
 import be4rjp.cinema4c.util.TaskHandler;
 import be4rjp.kuroko.Kuroko;
@@ -15,6 +16,7 @@ import be4rjp.kuroko.script.ScriptRunner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -174,7 +176,9 @@ public class NPC {
             Bukkit.getPluginManager().callEvent(speechEndEvent);
             currentSpeech = null;
             currentTalkIndex = 0;
-            if(npcData.getNpcScript() == null) Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
+            if(npcData.getNpcScript() == null){
+                Bukkit.getScheduler().runTaskLaterAsynchronously(Kuroko.getPlugin(), () -> scenePlayer.setPause(false), 25);
+            }
             
             this.runScriptFunction("onSpeechEnd", kurokoPlayer, this);
             
@@ -182,6 +186,16 @@ public class NPC {
         }else{
             talkCoolTime = System.currentTimeMillis() + 500;
         }
+    }
+    
+    public void sendEquipmentPacket(WrappedItemSlot wrappedItemSlot, ItemStack itemStack){
+        Object nmsNPC = this.getEntityPlayerInstance();
+        if(nmsNPC == null) return;
+        
+        try {
+            Object equipPacket = NMSUtil.createEntityEquipmentPacket(nmsNPC, itemStack, wrappedItemSlot);
+            NMSUtil.sendPacket(kurokoPlayer.getPlayer(), equipPacket);
+        }catch (Exception e){e.printStackTrace();}
     }
     
     public void resetSpeech(){
